@@ -6,6 +6,7 @@
 
   # libs
   gobject-introspection,
+  gtk4,
   goocanvas_2,
   unpaper,
   djvulibre,
@@ -33,14 +34,14 @@ let
 in
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "scantpaper";
-  version = "3.0.11";
+  version = "4.0.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "carygravel";
     repo = "scantpaper";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-6zjIEwDHdOIAIucV4T/zY10F80nQNOgnRkA+i2n7Sng=";
+    hash = "sha256-sn8VvMSMyWaEWhEHQrIUlW9BXGG9dnIKwgpsUkPd74s=";
   };
 
   dontWrapGApps = true;
@@ -72,6 +73,8 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
       goocanvas_2
     ];
 
+  buildInputs = [ gtk4 ];
+
   nativeBuildInputs = [
     wrapGAppsHook3
     gobject-introspection
@@ -94,6 +97,9 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     ]
     ++ runtimeExecDeps;
 
+  # The upstream GUI test suite aborts in the Nix build sandbox.
+  doCheck = false;
+
   makeWrapperArgs = [
     "--prefix"
     "PATH"
@@ -103,7 +109,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
 
   postInstall = ''
     install -Dm644 \
-      icons/hicolor/scalable/apps/scantpaper.svg \
+      src/scantpaper/icons/hicolor/scalable/apps/scantpaper.svg \
       $out/share/icons/hicolor/scalable/apps/scantpaper.svg
 
     install -Dm444 \
